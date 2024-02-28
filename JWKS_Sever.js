@@ -15,7 +15,7 @@ const Users = {
 };
 
 // Generate RSA key pair
-function generateRSAKeyPair() 
+function GenerateRSAKeyPair() 
 {
     return generateKeyPairSync('rsa', 
                                {
@@ -34,7 +34,7 @@ function generateRSAKeyPair()
 }
 
 // Generate JWT with a given private key
-function generateJWT(PrivateKey) 
+function GenerateJWT(PrivateKey) 
 {
     const payload = { Username: 'example_user' };
     return jwt.sign(payload, PrivateKey, { algorithm: 'RS256' });
@@ -59,7 +59,7 @@ app.post('/auth', (req, res) =>
     {
         if (expiry > Current_Time) 
         {
-            const token = generateJWT(PrivateKey);
+            const token = GenerateJWT(PrivateKey);
             return res.json({ token });
         }
     }
