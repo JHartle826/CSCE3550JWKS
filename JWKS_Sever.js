@@ -15,14 +15,18 @@ const users = {
 };
 
 // Generate RSA key pair
-function generateRSAKeyPair() {
-    return generateKeyPairSync('rsa', {
-        modulusLength: 2048,
-        publicKeyEncoding: {
-            type: 'spki',
-            format: 'pem'
+function generateRSAKeyPair() 
+{
+    return generateKeyPairSync('rsa', 
+                               {
+                modulusLength: 2048,
+                publicKeyEncoding: 
+                {
+                type: 'spki',
+                format: 'pem'
         },
-        privateKeyEncoding: {
+        privateKeyEncoding: 
+        {
             type: 'pkcs8',
             format: 'pem'
         }
@@ -30,25 +34,31 @@ function generateRSAKeyPair() {
 }
 
 // Generate JWT with a given private key
-function generateJWT(privateKey) {
+function generateJWT(privateKey) 
+{
     const payload = { username: 'example_user' };
     return jwt.sign(payload, privateKey, { algorithm: 'RS256' });
 }
 
 // Authentication endpoint
-app.post('/auth', (req, res) => {
+app.post('/auth', (req, res) => 
+    {
     const { username, password } = req.body;
-    if (!username || !password) {
+    if (!username || !password) 
+    {
         return res.status(400).json({ error: 'Username and password required' });
     }
-    if (!users[username] || users[username] !== password) {
+    if (!users[username] || users[username] !== password)
+    {
         return res.status(401).json({ error: 'Invalid credentials' });
     }
 
     // Authentication successful, generate JWT
     const current_time = Math.floor(Date.now() / 1000);
-    for (const [kid, { privateKey, expiry }] of Object.entries(keys)) {
-        if (expiry > current_time) {
+    for (const [kid, { privateKey, expiry }] of Object.entries(keys)) 
+    {
+        if (expiry > current_time) 
+        {
             const token = generateJWT(privateKey);
             return res.json({ token });
         }
@@ -59,15 +69,18 @@ app.post('/auth', (req, res) => {
 // Clean up expired keys
 function cleanExpiredKeys() {
     const current_time = Math.floor(Date.now() / 1000);
-    for (const [kid, { expiry }] of Object.entries(keys)) {
-        if (expiry <= current_time) {
+    for (const [kid, { expiry }] of Object.entries(keys)) 
+    {
+        if (expiry <= current_time) 
+        {
             delete keys[kid];
         }
     }
 }
 
 // JWKS endpoint
-app.get('/jwks', (req, res) => {
+app.get('/jwks', (req, res) => 
+{
     const current_time = Math.floor(Date.now() / 1000);
     const jwks_keys = Object.entries(keys).reduce((acc, [kid, { privateKey, expiry }]) => {
         if (expiry > current_time) {
@@ -86,7 +99,8 @@ app.get('/jwks', (req, res) => {
 });
 
 // Generate initial RSA key pair and start server
-function startServer() {
+function startServer() 
+{
     const { privateKey, publicKey } = generateRSAKeyPair();
     keys['1'] = { privateKey, expiry: Math.floor(Date.now() / 1000) + 3600 }; // Expiry in 1 hour
 
